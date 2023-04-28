@@ -1,4 +1,4 @@
-module go-pkg
+module github.com/ohmspeed777/go-pkg
 
 go 1.19
 
