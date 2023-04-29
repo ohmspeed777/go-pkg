@@ -56,7 +56,7 @@ func createError(status StatusCode, message string, causer ...error) error {
 	return err
 }
 
-func NewError(status StatusCode, message string, causer ...error) error {
+func New(status StatusCode, message string, causer ...error) error {
 	err := createError(status, message, causer...)
 	return err
 }
