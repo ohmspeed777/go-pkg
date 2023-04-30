@@ -2,7 +2,8 @@ package errorx
 
 import (
 	"fmt"
-	
+	"net/http"
+
 	"github.com/pkg/errors"
 )
 
@@ -56,9 +57,14 @@ func createError(status StatusCode, message string, causer ...error) error {
 	return err
 }
 
+func NewInvalidRequest(causer ...error) error {
+	return createError(http.StatusBadRequest, "invalid request", causer...)
+
+}
+
 func New(status StatusCode, message string, causer ...error) error {
-	err := createError(status, message, causer...)
-	return err
+	return createError(status, message, causer...)
+
 }
 
 func (e *Error) Error() string {
