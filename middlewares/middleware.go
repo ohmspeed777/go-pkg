@@ -4,11 +4,9 @@ import (
 	"bytes"
 	"crypto/rsa"
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/ohmspeed777/go-pkg/errorx"
@@ -160,9 +158,7 @@ func LogResponseMiddleware() echo.MiddlewareFunc {
 
 type (
 	ErrorResponse struct {
-		Msg         string `json:"message"`
-		StackTracer string `json:"stack_tracer,omitempty"`
-		Causer      string `json:"causer,omitempty"`
+		Msg string `json:"message"`
 	}
 
 	stackTracer interface {
@@ -186,15 +182,11 @@ func CustomHTTPErrorHandler(e error, c echo.Context) {
 
 	err, ok := e.(*errorx.Error)
 	if ok {
-		stackStr := strings.ReplaceAll(fmt.Sprintf("%+v", err.StackTracer), "\t", "\\n")
 		res := &ErrorResponse{
-			Msg:         err.Msg,
-			StackTracer: stackStr,
-			Causer:      fmt.Sprintf("%+v", err.Causer),
+			Msg: err.Msg,
 		}
 
 		logCtx.WithField("error", err.Error()).Error(ERROR_INFO)
-
 		c.JSON(int(err.StatusCode), res)
 		return
 	}

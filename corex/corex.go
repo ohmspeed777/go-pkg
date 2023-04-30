@@ -5,25 +5,36 @@ import (
 	"errors"
 
 	"github.com/labstack/echo/v4"
+	"github.com/ohmspeed777/go-pkg/jwtx"
 )
 
 type ContextKey struct{}
 
-type ContextValues map[string]any
+type ContextValues struct {
+	User    *jwtx.User
+	TraceID string
+	SpanID  string
+}
 
 func NewFromEchoContext(c echo.Context) context.Context {
-	values := ContextValues{
-		"trace_id": c.Request().Header.Get("trace_id"),
-		"span_id":  c.Request().Header.Get("span_id"),
+	values := &ContextValues{
+		TraceID: c.Request().Header.Get("trace_id"),
+		SpanID:  c.Request().Header.Get("span_id"),
 	}
+
+	user, ok := c.Get("user").(*jwtx.User)
+	if ok {
+		values.User = user
+	}
+
 	return context.WithValue(c.Request().Context(), ContextKey{}, values)
 }
 
 func NewOutingEchoContext(c context.Context) (*ContextValues, error) {
-	values, ok := c.Value(ContextKey{}).(ContextValues)
+	values, ok := c.Value(ContextKey{}).(*ContextValues)
 	if !ok {
 		return nil, errors.New("can not parse context to ContextValues")
 	}
 
-	return &values, nil
+	return values, nil
 }
