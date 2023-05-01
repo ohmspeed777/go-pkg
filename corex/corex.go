@@ -30,7 +30,7 @@ func NewFromEchoContext(c echo.Context) context.Context {
 	return context.WithValue(c.Request().Context(), ContextKey{}, values)
 }
 
-func NewOutingEchoContext(c context.Context) (*ContextValues, error) {
+func NewFromOutingContext(c context.Context) (*ContextValues, error) {
 	values, ok := c.Value(ContextKey{}).(*ContextValues)
 	if !ok {
 		return nil, errors.New("can not parse context to ContextValues")
