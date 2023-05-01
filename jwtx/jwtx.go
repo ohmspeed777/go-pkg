@@ -52,7 +52,7 @@ func (j *JWT) MapClaims(c echo.Context) (*User, error) {
 	}
 
 	user.ID = claims["id"].(string)
-	user.Role = claims["role"].(int)
+	user.Role = int(claims["role"].(float64))
 
 	return user, nil
 }
