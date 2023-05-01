@@ -158,7 +158,7 @@ func LogResponseMiddleware() echo.MiddlewareFunc {
 
 type (
 	ErrorResponse struct {
-		Msg string `json:"message"`
+		Msg any `json:"message"`
 	}
 
 	stackTracer interface {
@@ -188,6 +188,17 @@ func CustomHTTPErrorHandler(e error, c echo.Context) {
 
 		logCtx.WithField("error", err.Error()).Error(ERROR_INFO)
 		c.JSON(int(err.StatusCode), res)
+		return
+	}
+
+	echoErr, ok := e.(*echo.HTTPError)
+	if ok {
+		res := &ErrorResponse{
+			Msg: echoErr.Message,
+		}
+
+		logCtx.WithField("error", echoErr.Error()).Error(ERROR_INFO)
+		c.JSON(echoErr.Code, res)
 		return
 	}
 
